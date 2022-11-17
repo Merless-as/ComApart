@@ -4,7 +4,7 @@ import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 func (b *Bot) handlerCommand(message *tgbotapi.Message) error {
 	switch message.Command() {
-	case "Start":
+	case "start":
 		return b.handlerStartCommand(message)
 	default:
 		return b.handlerUnknownCommand(message)

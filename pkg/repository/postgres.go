@@ -2,8 +2,10 @@ package repository
 
 import "database/sql"
 
+const Conn = "user=? password=? dbname=? sslmode=?"
+
 func NewPostgresDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "")
+	db, err := sql.Open("postgres", Conn)
 	if err != nil {
 		return nil, err
 	}
