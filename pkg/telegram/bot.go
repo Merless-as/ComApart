@@ -1,12 +1,14 @@
 package telegram
 
 import (
+	"HelpWithComm/pkg/handler"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
 
 type Bot struct {
 	bot *tgbotapi.BotAPI
+	handler *handler.Num
 }
 
 func NewBot(bot *tgbotapi.BotAPI) *Bot {

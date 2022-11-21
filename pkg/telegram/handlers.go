@@ -1,22 +1,41 @@
 package telegram
 
-import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+import (
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"strconv"
+)
 
 func (b *Bot) handlerCommand(message *tgbotapi.Message) error {
 	switch message.Command() {
 	case "start":
 		return b.handlerStartCommand(message)
-	case "count":
-		return b.handlerCountCommand(message)
+	case "help":
+		return b.handlerHelpCommand(message)
 	default:
 		return b.handlerUnknownCommand(message)
 	}
 }
 
 func (b *Bot) handlerMessage(message *tgbotapi.Message) error {
-	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
+	if err := b.ValidMessage(message); err != nil {
+		return err
+	}
+	id, err := b.GetId(message)
+	if err != nil {
+		return err
+	}
 
-	_, err := b.bot.Send(msg)
+	text := ""
+
+	sum, err := b.handler.Count(id)
+	if err != nil {
+		return err
+	}
+	text += strconv.Itoa(sum)
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, text)
+
+	_, err = b.bot.Send(msg)
 	return err
 }
 
@@ -27,8 +46,10 @@ func (b *Bot) handlerStartCommand(message *tgbotapi.Message) error {
 	return err
 }
 
-func (b *Bot) handlerCountCommand(message *tgbotapi.Message) error {
-	return nil
+func (b *Bot) handlerHelpCommand(message *tgbotapi.Message) error{
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Введите показания счетчиков, затем выберете номер квартиры.")
+	_, err := b.bot.Send(msg)
+	return err
 }
 
 func (b *Bot) handlerUnknownCommand(message *tgbotapi.Message) error {
@@ -36,4 +57,12 @@ func (b *Bot) handlerUnknownCommand(message *tgbotapi.Message) error {
 
 	_, err := b.bot.Send(msg)
 	return err
+}
+
+func (b *Bot) ValidMessage(message *tgbotapi.Message) error {
+	return nil
+}
+
+func (b *Bot) GetId(message *tgbotapi.Message) (int, error) {
+	return 0, nil
 }
