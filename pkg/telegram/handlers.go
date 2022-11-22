@@ -20,14 +20,15 @@ func (b *Bot) handlerMessage(message *tgbotapi.Message) error {
 	if err := b.ValidMessage(message); err != nil {
 		return err
 	}
-	id, err := b.GetId(message)
-	if err != nil {
-		return err
-	}
+//	id, err := b.GetId(message)
+//	if err != nil {
+//		return err
+//	}
 
-	text := ""
+	id := 1
+	text := "Сумма: "
 
-	sum, err := b.handler.Count(id)
+	sum, err := b.handler.Count(id, message.Text)
 	if err != nil {
 		return err
 	}
@@ -63,6 +64,6 @@ func (b *Bot) ValidMessage(message *tgbotapi.Message) error {
 	return nil
 }
 
-func (b *Bot) GetId(message *tgbotapi.Message) (int, error) {
-	return 0, nil
-}
+//func (b *Bot) GetId(message *tgbotapi.Message) (int, error) {
+//	return 0, nil
+//}

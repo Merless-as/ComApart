@@ -1,11 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 const Conn = "user=? password=? dbname=? sslmode=?"
 
-func NewPostgresDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", Conn)
+func NewPostgresDB() (*sqlx.DB, error) {
+	db, err := sqlx.Open("postgres", Conn)
 	if err != nil {
 		return nil, err
 	}

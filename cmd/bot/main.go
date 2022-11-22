@@ -1,8 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"HelpWithComm/pkg/handler"
+	"HelpWithComm/pkg/repository"
+	"HelpWithComm/pkg/telegram"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"log"
+)
 
-const (
+/*const (
 	CostGaz = 7.04
 	CostLight = 4.36
 	CostWater = 26.90
@@ -11,17 +17,30 @@ const (
 	Remont = 260
 	JKX = 612
 	OtherForInter = 1267
-)
+)*/
+
+const Token = ""
 
 func main() {
-	var oldG, oldL, oldW int
-	var g, l, w int
-	fmt.Println("Введите предыдущие показания в следующем порядке: газ, эл, вода")
-	fmt.Scan(&oldG, &oldL, &oldW)
-	fmt.Println("Введите показания в следующем порядке: газ, эл, вода")
-	fmt.Scan(&g, &l, &w)
-	gaz := float64(g-oldG) * CostGaz
-	light := float64(l-oldL) * CostLight
-	water := float64(w-oldW) * CostWater
-	fmt.Println("Коммуналка получается: ", int(gaz+light+water)+Other)
+	bot, err := tgbotapi.NewBotAPI(Token)
+	if err != nil{
+		log.Panic(err)
+	}
+
+	bot.Debug = true
+
+	db, err := repository.NewPostgresDB()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	rep := repository.NewRepository(db)
+	handle := handler.NewNum(rep)
+	TBot := telegram.NewBot(bot, handle)
+
+	go func() {
+		if err = TBot.Start(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 }

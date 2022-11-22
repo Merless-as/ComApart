@@ -3,19 +3,19 @@ package handler
 import (
 	ComApart "HelpWithComm"
 	"HelpWithComm/pkg/repository"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"strconv"
+	"strings"
 )
 
 type Num struct {
-	r repository.Repository
-	message tgbotapi.Message
+	r       *repository.Repository
 }
 
-func NewNum(r repository.Repository, message tgbotapi.Message) *Num {
-	return &Num{r: r, message: message}
+func NewNum(r *repository.Repository) *Num {
+	return &Num{r: r}
 }
 
-func (n *Num) Count (id int) (int, error) {
+func (n *Num) Count(id int, message string) (int, error) {
 	stC, err := n.r.SearchCounter(id)
 	if err != nil {
 		return 0, err
@@ -26,26 +26,39 @@ func (n *Num) Count (id int) (int, error) {
 		return 0, err
 	}
 
-	NewS, err := n.GetCount(n.message)
+	NewS, err := n.GetCount(message)
 	if err != nil {
 		return 0, err
 	}
 
 	SumP, err := n.SumOfPrice(stP)
 	if err != nil {
-		 return 0, err
+		return 0, err
 	}
 
-	sum := SumP + int(float64(NewS.Gas-stC.Gas) * stP.CostGas +
-		float64(NewS.Water-stC.Water) * stP.CostWater + float64(NewS.Electricity-stC.Electricity) * stP.CostElectricity)
+	sum := SumP + int(float64(NewS.Gas-stC.Gas)*stP.CostGas+
+		float64(NewS.Water-stC.Water)*stP.CostWater+float64(NewS.Electricity-stC.Electricity)*stP.CostElectricity)
 
 	return sum, nil
 }
 
-func (n *Num) GetCount(message tgbotapi.Message) (ComApart.SearchCounter, error)  {
-	return ComApart.SearchCounter{}, nil
+func (n *Num) GetCount(message string) (ComApart.SearchCounter, error) {
+	text := strings.Split(message, " ")
+	gas, err := strconv.Atoi(text[0])
+	if err != nil {
+		return ComApart.SearchCounter{}, err
+	}
+	water, err := strconv.Atoi(text[0])
+	if err != nil {
+		return ComApart.SearchCounter{}, err
+	}
+	el, err := strconv.Atoi(text[0])
+	if err != nil {
+		return ComApart.SearchCounter{}, err
+	}
+	return ComApart.SearchCounter{Gas: gas, Water: water, Electricity: el}, nil
 }
 
 func (n *Num) SumOfPrice(price ComApart.SearchPrice) (int, error) {
-	return 0, nil
+	return price.Repair + price.Intercom + price.CommunalServices, nil
 }

@@ -11,8 +11,8 @@ type Bot struct {
 	handler *handler.Num
 }
 
-func NewBot(bot *tgbotapi.BotAPI) *Bot {
-	return &Bot{bot: bot}
+func NewBot(bot *tgbotapi.BotAPI, handler *handler.Num) *Bot {
+	return &Bot{bot: bot, handler: handler}
 }
 
 func (b *Bot) Start() error {
